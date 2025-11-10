@@ -1,0 +1,13 @@
+body { font-family: Arial, sans-serif; padding: 20px; background: #f7f7f7 }
+.container { max-width: 1100px; margin: 0 auto; background: #fff; padding: 20px; border-radius: 6px }
+.layout { display: flex; gap: 20px }
+.left { width: 40% }
+.right { width: 60% }
+.book-list { list-style: none; padding: 0 }
+.book-list li { display: flex; gap: 10px; padding: 8px; border-bottom: 1px solid #eee; cursor: pointer }
+.book-list img { width: 60px; height: 90px; object-fit: cover }
+.details img { width: 150px; height: 220px; object-fit: cover }
+.buy-btn { display: inline-block; padding: 8px 12px; background: #007bff; color: white; border-radius: 4px; text-decoration: none }
+.admin-form { display: flex; flex-direction: column; gap: 8px; margin-top: 12px }
+.admin-form input, .admin-form textarea { padding: 8px; border: 1px solid #ddd; border-radius: 4px }
+.message { margin-top: 8px; color: green }

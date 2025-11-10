@@ -1,0 +1,8 @@
+{
+  "name": "bookstore-root",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "mongodb": "^4.10.0"
+  }
+}
