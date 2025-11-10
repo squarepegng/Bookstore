@@ -26,7 +26,7 @@ async function start() {
       process.exit(1);
     }
     await mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
-    console.log('Connected to MongoDB');
+    console.log('✅ Connected to MongoDB');
 
     app.listen(PORT, () => {
       console.log(`Server listening on http://localhost:${PORT}`);
