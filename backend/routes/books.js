@@ -1,14 +1,25 @@
-// Routes for /api/books
+// Routes for /api/books with Supabase integration
 
 const express = require('express');
 const router = express.Router();
-const Book = require('../models/Book');
+const { createClient } = require('@supabase/supabase-js');
+
+// Initialize Supabase client
+const supabaseUrl = process.env.SUPABASE_URL;
+const supabaseKey = process.env.SUPABASE_ANON_KEY;
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 // GET /api/books — return all books
 router.get('/', async (req, res) => {
   try {
-    const books = await Book.find().sort({ createdAt: -1 });
-    res.json(books);
+    const { data, error } = await supabase
+      .from('Books')
+      .select('*')
+      .order('created_at', { ascending: false });
+    
+    if (error) throw error;
+    
+    res.json(data);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error' });
@@ -28,9 +39,23 @@ router.post('/add', async (req, res) => {
       return res.status(400).json({ error: 'Missing required fields: title, author, price' });
     }
 
-    const book = new Book({ title, author, description, price, imageUrl, paymentLink });
-    await book.save();
-    res.json({ message: 'Book added', book });
+    const { data, error } = await supabase
+      .from('Books')
+      .insert([
+        {
+          title,
+          author,
+          description: description || '',
+          price,
+          image_url: imageUrl || '',
+          payment_link: paymentLink || '',
+        }
+      ])
+      .select();
+    
+    if (error) throw error;
+    
+    res.json({ message: 'Book added', book: data[0] });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error' });

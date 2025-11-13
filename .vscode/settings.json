@@ -1,0 +1,24 @@
+{
+  "[python]": {
+    "editor.defaultFormatter": "ms-python.python",
+    "editor.formatOnSave": true
+  },
+  "python.linting.enabled": true,
+  "python.linting.pylintEnabled": true,
+  "mcp": {
+    "enabled": true,
+    "servers": {
+      "supabase": {
+        "url": "https://mcp.supabase.com/mcp?project_ref=ygiqbicywglcfernspov",
+        "description": "Supabase MCP Server - Direct database access"
+      }
+    }
+  },
+  "copilot.advanced": {
+    "mcpServers": {
+      "supabase": {
+        "url": "https://mcp.supabase.com/mcp?project_ref=ygiqbicywglcfernspov"
+      }
+    }
+  }
+}

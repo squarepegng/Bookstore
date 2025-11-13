@@ -6,7 +6,7 @@ const API_URL = import.meta.env.VITE_API_URL || ''
 // Simple admin area to add books. Protected by an admin password field.
 export default function Admin({ onAdded }) {
   const [password, setPassword] = useState('')
-  const [form, setForm] = useState({ title: '', author: '', description: '', price: '', imageUrl: '', paymentLink: '' })
+  const [form, setForm] = useState({ title: '', author: '', description: '', price: '', image_url: '', payment_link: '' })
   const [message, setMessage] = useState('')
 
   async function handleAdd(e) {
@@ -17,7 +17,7 @@ export default function Admin({ onAdded }) {
   const url = `${API_URL}/.netlify/functions/add-book`.replace('//.netlify', '/.netlify')
   const res = await axios.post(url, payload)
       setMessage('Book added successfully')
-      setForm({ title: '', author: '', description: '', price: '', imageUrl: '', paymentLink: '' })
+      setForm({ title: '', author: '', description: '', price: '', image_url: '', payment_link: '' })
       if (onAdded) onAdded()
     } catch (err) {
       console.error(err)
@@ -33,8 +33,8 @@ export default function Admin({ onAdded }) {
         <input placeholder="Title" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} />
         <input placeholder="Author" value={form.author} onChange={(e) => setForm({ ...form, author: e.target.value })} />
         <input placeholder="Price" value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} />
-        <input placeholder="Image URL" value={form.imageUrl} onChange={(e) => setForm({ ...form, imageUrl: e.target.value })} />
-        <input placeholder="Payment link" value={form.paymentLink} onChange={(e) => setForm({ ...form, paymentLink: e.target.value })} />
+        <input placeholder="Image URL" value={form.image_url} onChange={(e) => setForm({ ...form, image_url: e.target.value })} />
+        <input placeholder="Payment link" value={form.payment_link} onChange={(e) => setForm({ ...form, payment_link: e.target.value })} />
         <textarea placeholder="Description" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
         <button type="submit">Add Book</button>
       </form>

@@ -1,29 +1,16 @@
 // Netlify Function: add-book
-// Adds a new book to MongoDB Atlas. Requires ADMIN_PASSWORD in environment variables.
+// Adds a new book to Supabase. Requires ADMIN_PASSWORD in environment variables.
 
-const { MongoClient } = require('mongodb')
+const { createClient } = require('@supabase/supabase-js')
 
-const uri = process.env.MONGODB_URI
-if (!uri) {
-  console.error('MONGODB_URI not set in Netlify environment')
+const supabaseUrl = process.env.SUPABASE_URL
+const supabaseKey = process.env.SUPABASE_ANON_KEY
+
+if (!supabaseUrl || !supabaseKey) {
+  console.error('SUPABASE_URL or SUPABASE_ANON_KEY not set in Netlify environment')
 }
 
-let cachedClient = global._mongoClient
-let cachedDb = global._mongoDb
-
-async function connectToDatabase() {
-  if (cachedClient && cachedDb) {
-    return { client: cachedClient, db: cachedDb }
-  }
-  const client = new MongoClient(uri)
-  await client.connect()
-  const db = client.db()
-  global._mongoClient = client
-  global._mongoDb = db
-  cachedClient = client
-  cachedDb = db
-  return { client, db }
-}
+const supabase = createClient(supabaseUrl, supabaseKey)
 
 exports.handler = async function (event, context) {
   if (event.httpMethod !== 'POST') {
@@ -41,21 +28,26 @@ exports.handler = async function (event, context) {
       return { statusCode: 400, body: JSON.stringify({ error: 'Missing required fields: title, author, price' }) }
     }
 
-    const { db } = await connectToDatabase()
-    const result = await db.collection('books').insertOne({
-      title,
-      author,
-      description,
-      price: parseFloat(price),
-      imageUrl,
-      paymentLink,
-      createdAt: new Date()
-    })
+    const { data, error } = await supabase
+      .from('Books')
+      .insert([
+        {
+          title,
+          author,
+          description,
+          price: parseFloat(price),
+          image_url: imageUrl,
+          payment_link: paymentLink
+        }
+      ])
+      .select()
+
+    if (error) throw error
 
     return {
       statusCode: 200,
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message: 'Book added', bookId: result.insertedId })
+      body: JSON.stringify({ message: 'Book added', book: data[0] })
     }
   } catch (err) {
     console.error('add-book error', err)

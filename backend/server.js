@@ -1,9 +1,8 @@
-// Simple Express server for the bookstore backend
+// Simple Express server for the bookstore backend with Supabase
 
 const express = require('express');
-const mongoose = require('mongoose');
 const cors = require('cors');
-require('dotenv').config(); // loads MONGODB_URI and ADMIN_PASSWORD from .env
+require('dotenv').config(); // loads SUPABASE_URL, SUPABASE_ANON_KEY, and ADMIN_PASSWORD from .env
 
 const booksRouter = require('./routes/books');
 
@@ -17,16 +16,18 @@ app.use(express.json()); // parse JSON request bodies
 // Routes
 app.use('/api/books', booksRouter);
 
-// Connect to MongoDB and start server
+// Verify Supabase configuration
 async function start() {
   try {
-    const uri = process.env.MONGODB_URI;
-    if (!uri) {
-      console.error('MONGODB_URI not set in environment. See .env.example');
+    const url = process.env.SUPABASE_URL;
+    const anonKey = process.env.SUPABASE_ANON_KEY;
+    
+    if (!url || !anonKey) {
+      console.error('SUPABASE_URL and SUPABASE_ANON_KEY not set in environment. See .env.example');
       process.exit(1);
     }
-    await mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
-    console.log('✅ Connected to MongoDB');
+    
+    console.log('✅ Supabase configured');
 
     app.listen(PORT, () => {
       console.log(`Server listening on http://localhost:${PORT}`);
