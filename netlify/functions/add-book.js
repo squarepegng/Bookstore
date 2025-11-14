@@ -38,8 +38,16 @@ exports.handler = async function (event, context) {
     } = body
     const finalImage = image_url ?? imageUrl ?? ''
     const finalPayment = payment_link ?? paymentLink ?? ''
-    if (!title || !author || typeof price === 'undefined') {
-      return { statusCode: 400, body: JSON.stringify({ error: 'Missing required fields: title, author, price' }) }
+
+    // Validate required fields
+    if (!title || !author) {
+      return { statusCode: 400, body: JSON.stringify({ error: 'Missing required fields: title and author are required' }) }
+    }
+
+    // Validate price is a finite number
+    const parsedPrice = Number(price)
+    if (!Number.isFinite(parsedPrice)) {
+      return { statusCode: 400, body: JSON.stringify({ error: 'Invalid price: must be a number' }) }
     }
 
     const { data, error } = await supabase
@@ -49,7 +57,7 @@ exports.handler = async function (event, context) {
           title,
           author,
           description,
-          price: parseFloat(price),
+          price: parsedPrice,
           image_url: finalImage,
           payment_link: finalPayment
         }
