@@ -23,7 +23,21 @@ exports.handler = async function (event, context) {
       return { statusCode: 401, body: JSON.stringify({ error: 'Unauthorized: invalid admin password' }) }
     }
 
-    const { title, author, description = '', price, imageUrl = '', paymentLink = '' } = body
+    // Accept both camelCase and snake_case field names from callers to be robust
+    const {
+      title,
+      author,
+      description = '',
+      price,
+      // support both imageUrl and image_url
+      imageUrl = undefined,
+      image_url = undefined,
+      // support both paymentLink and payment_link
+      paymentLink = undefined,
+      payment_link = undefined
+    } = body
+    const finalImage = image_url ?? imageUrl ?? ''
+    const finalPayment = payment_link ?? paymentLink ?? ''
     if (!title || !author || typeof price === 'undefined') {
       return { statusCode: 400, body: JSON.stringify({ error: 'Missing required fields: title, author, price' }) }
     }
@@ -36,8 +50,8 @@ exports.handler = async function (event, context) {
           author,
           description,
           price: parseFloat(price),
-          image_url: imageUrl,
-          payment_link: paymentLink
+          image_url: finalImage,
+          payment_link: finalPayment
         }
       ])
       .select()

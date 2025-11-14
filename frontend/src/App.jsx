@@ -19,7 +19,15 @@ export default function App() {
       // When using Netlify Functions the endpoint will be '/.netlify/functions/get-books'
       const url = `${API_URL}/.netlify/functions/get-books`.replace('//.netlify', '/.netlify')
       const res = await axios.get(url)
-      setBooks(res.data)
+      // Ensure we only set an array of books. If the function returns an error
+      // object (e.g. { error: 'Server error' }) protect against .map crashes.
+      const data = res.data
+      if (Array.isArray(data)) {
+        setBooks(data)
+      } else {
+        console.error('Unexpected response for books:', data)
+        setBooks([])
+      }
     } catch (err) {
       console.error('Error fetching books', err)
     }
